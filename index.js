@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const http = require('http');
 const { Server } = require("socket.io");
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -7,6 +8,7 @@ const Message = require('./components/models/Message');
 const Room = require('./components/models/Room');
 
 const app = express();
+const server = http.createServer(app);
 
 const corsOptions = {
     origin: process.env.CLIENT_URL,
@@ -26,7 +28,7 @@ mongoose.connect(MONGO_DB_URI, { useNewUrlParser: true, useUnifiedTopology: true
     .then(() => console.log('Successful connection to MongoDB'))
     .catch(err => console.error('Error connecting to MongoDB', err));
 
-const io = new Server(app, {
+const io = new Server(server, {
     cors: {
         origin: CLIENT_URL,
         methods: ["GET", "POST"]
