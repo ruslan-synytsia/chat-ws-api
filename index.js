@@ -172,6 +172,6 @@ io.on('connection', async (socket) => {
     });
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`The server is running on the port ${PORT}`);
 });
