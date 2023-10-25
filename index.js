@@ -26,7 +26,7 @@ mongoose.connect(MONGO_DB_URI, { useNewUrlParser: true, useUnifiedTopology: true
     .then(() => console.log('Successful connection to MongoDB'))
     .catch(err => console.error('Error connecting to MongoDB', err));
 
-const io = new Server(server, {
+const io = new Server(app, {
     cors: {
         origin: CLIENT_URL,
         methods: ["GET", "POST"]
