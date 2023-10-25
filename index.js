@@ -26,11 +26,6 @@ mongoose.connect(MONGO_DB_URI, { useNewUrlParser: true, useUnifiedTopology: true
     .then(() => console.log('Successful connection to MongoDB'))
     .catch(err => console.error('Error connecting to MongoDB', err));
 
-// Creating an HTTP server using a self-signed certificate
-// ===================================================================================
-
-const server = app.createServer(serverOptions, app);
-
 const io = new Server(server, {
     cors: {
         origin: CLIENT_URL,
@@ -175,6 +170,6 @@ io.on('connection', async (socket) => {
     });
 });
 
-server.listen(PORT, () => {
+app.listen(PORT, () => {
     console.log(`The server is running on the port ${PORT}`);
 });
