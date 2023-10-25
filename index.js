@@ -10,6 +10,10 @@ const Room = require('./components/models/Room');
 const app = express();
 const server = http.createServer(app);
 
+const PORT = process.env.PORT || 5000;
+const MONGO_DB_URI = process.env.MONGO_DB_URI;
+const CLIENT_URL = process.env.CLIENT_URL;
+
 const corsOptions = {
     origin: process.env.CLIENT_URL,
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE'
@@ -17,10 +21,6 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.use(express.json());
-
-const PORT = process.env.PORT || 5000;
-const MONGO_DB_URI = process.env.MONGO_DB_URI;
-const CLIENT_URL = process.env.CLIENT_URL;
 
 // Connecting to MongoDB database via Mongoose
 // ===================================================================================
@@ -47,7 +47,7 @@ const getUserIds = (obj) => {
 io.on('connection', async (socket) => {
     const socketId = socket.id;
     socket.on('setUserId', (userId) => {
-        // console.log(`User connected with socket ID: ${socketId}`);
+        console.log(`User connected with socket ID: ${socketId}`);
         connections[socket.id] = { socket, userId };
 
         // Extract all available ids into an array with active users
