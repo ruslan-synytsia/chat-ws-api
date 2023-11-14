@@ -1,7 +1,5 @@
 require('dotenv').config();
 const express = require('express');
-const https = require('https');
-const fs = require('fs');
 const { Server } = require("socket.io");
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -30,16 +28,7 @@ mongoose.connect(MONGO_DB_URI, { useNewUrlParser: true, useUnifiedTopology: true
     .then(() => console.log('Successful connection to MongoDB'))
     .catch(err => console.error('Error connecting to MongoDB', err));
 
-// Creating an HTTPS server using a self-signed certificate
-// ===================================================================================
-const serverOptions = {
-    key: fs.readFileSync('key.pem'),
-    cert: fs.readFileSync('cert.pem')
-};
-
-const server = https.createServer(serverOptions, app);
-
-const io = new Server(server, {
+const io = new Server(app, {
     cors: {
         origin: CLIENT_URL,
         methods: ["GET", "POST"]
@@ -217,6 +206,6 @@ io.on('connection', async (socket) => {
     });
 });
 
-server.listen(PORT, () => {
+app.listen(PORT, () => {
     console.log(`The server is running on the port ${PORT} using HTTPS`);
 });
