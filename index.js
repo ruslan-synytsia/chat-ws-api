@@ -1,5 +1,6 @@
 require('dotenv').config();
 const express = require('express');
+const http = require('http');
 const { Server } = require("socket.io");
 const cors = require('cors');
 const mongoose = require('mongoose');
@@ -9,6 +10,7 @@ const updateUnreadCount = require('./components/functions/updateUnreadCount');
 const resetUnreadMessages = require('./components/functions/resetUnreadMessages');
 
 const app = express();
+const server = http.createServer(app);
 
 const corsOptions = {
     origin: process.env.CLIENT_URL,
@@ -28,7 +30,7 @@ mongoose.connect(MONGO_DB_URI, { useNewUrlParser: true, useUnifiedTopology: true
     .then(() => console.log('Successful connection to MongoDB'))
     .catch(err => console.error('Error connecting to MongoDB', err));
 
-const io = new Server(app, {
+const io = new Server(server, {
     cors: {
         origin: CLIENT_URL,
         methods: ["GET", "POST"]
@@ -61,11 +63,9 @@ io.on('connection', async (socket) => {
         // Send the userId array to all connected users when connecting a new socket
         socket.broadcast.emit('set_online_user_ids', allUserIds);
 
-        // Уведомляем подключенного пользователя о новых сообщениях
+        // Notify the connected user about new messages
         if (unreadMessages.length > 0) {
             const filteredNotifications = unreadMessages.filter(notification => notification.recipientId === userId);
-            // console.log(userId)
-            // console.log(filteredNotifications)
             socket.emit('set_all_private_message_notifications', filteredNotifications);
         }
     });
@@ -206,6 +206,6 @@ io.on('connection', async (socket) => {
     });
 });
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
     console.log(`The server is running on the port ${PORT} using HTTPS`);
 });
